@@ -19,7 +19,6 @@ public class MyPipe : MonoBehaviour
 		if (MyManager.canPlay)
 		{
 			pipeRig.velocity = Vector2.left * 4;
-			Debug.Log("Going...");
 		}
 	}
 }
