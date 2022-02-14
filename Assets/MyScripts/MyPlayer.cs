@@ -7,12 +7,21 @@ public class MyPlayer : MonoBehaviour
     public Rigidbody2D myRig;
     public SpriteRenderer mySpriteRend;
 
+    public MyPlayerCollisionDetection myBird;
+
     public List<MyDecision> myDecisions = new List<MyDecision>();
+
+    public int previousScore = 0;
+    
+    public int maxFitness = 0;
+    public int maxFitnessIndex = 0;
 
     MyManager myMan;
 
     float timePassing = 0;
     float nextDecisionTime = 0;
+
+    int pointsOwned = 0;
 
     void Start()
     {
@@ -48,8 +57,24 @@ public class MyPlayer : MonoBehaviour
         byte randomDec = (byte) Random.Range(0, 2);
         if (randomDec == 1) Jump();
 
-        MyDecision newDec = new MyDecision(myMan.Get_Fitness(transform.position), randomDec);
+        int fitness = myMan.Get_Fitness(myBird.transform.position);
+
+        if (maxFitness < fitness + previousScore)
+        {
+            maxFitness = fitness + previousScore;
+            maxFitnessIndex = myDecisions.Count - 1;
+        }
+
+        MyDecision newDec = new MyDecision(fitness + previousScore, randomDec);
         myDecisions.Add(newDec);
+    }
+
+    public void Increment_Score()
+    {
+        pointsOwned++;
+        maxFitness = pointsOwned * 10000;
+        previousScore = maxFitness;
+        myMan.Next_Pipe();
     }
 
     public void Jump()

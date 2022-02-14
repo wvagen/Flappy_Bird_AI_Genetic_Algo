@@ -42,11 +42,24 @@ public class MyManager : MonoBehaviour
 
     void Spawn_Agents()
     {
-        for (int i = 0; i < agentNumber; i++)
+        Vector2 nextSpawnPos = playerSpawnPos.position;
+        for (int i = 0; i < agentNumber / 2 + 1; i++)
         {
-            MyPlayer playerScript = Instantiate(player, playerSpawnPos.position, Quaternion.identity, playerSpawnPos).
+            MyPlayer playerScript = Instantiate(player, nextSpawnPos, Quaternion.identity, playerSpawnPos).
                 GetComponent<MyPlayer>();
             playerScript.Set_My_Manager(this);
+            if (nextSpawnPos.y < 2)
+            nextSpawnPos.y += 0.4f;
+            players.Add(playerScript);
+        }
+        nextSpawnPos = playerSpawnPos.position;
+        for (int i = agentNumber / 2 + 1; i < agentNumber; i++)
+        {
+            MyPlayer playerScript = Instantiate(player, nextSpawnPos, Quaternion.identity, playerSpawnPos).
+                GetComponent<MyPlayer>();
+            playerScript.Set_My_Manager(this);
+            if (nextSpawnPos.y > -2)
+                nextSpawnPos.y -= 0.4f;
             players.Add(playerScript);
         }
     }
@@ -55,11 +68,23 @@ public class MyManager : MonoBehaviour
     void Update()
     {
         canPlay = canStart;
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            Debug.Log("Agent " + i.ToString() + " max fitness: " + players[i].maxFitness);
+        }
+
+    }
+
+    public void Next_Pipe()
+    {
+        nextPipe++;
     }
 
     public int Get_Fitness(Vector2 playerPos)
     {
-        return  (int)(100 * (1 / Vector2.Distance(pipesPos[nextPipe].position, playerPos)));
+        if (1 / Vector2.Distance(pipesPos[nextPipe].position, playerPos) > 10000) return 10000;
+        else return  (int)(10000 * (1 / Vector2.Distance(pipesPos[nextPipe].position, playerPos)));
     }
 
 }
