@@ -165,6 +165,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2764930422209356713}
   - component: {fileID: 2764930422209356712}
+  - component: {fileID: 2486382825217697666}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -203,6 +204,26 @@ MonoBehaviour:
   mySpriteRend: {fileID: 2764930421518579654}
   myBird: {fileID: 7277319889987488734}
   myDecisions: []
+  myAnim: {fileID: 2486382825217697666}
   previousScore: 0
   maxFitness: 0
   maxFitnessIndex: 0
+--- !u!95 &2486382825217697666
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2764930422209356714}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 03f5f12275507e64da6ed478b066b596, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

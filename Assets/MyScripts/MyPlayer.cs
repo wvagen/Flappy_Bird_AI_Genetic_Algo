@@ -11,8 +11,10 @@ public class MyPlayer : MonoBehaviour
 
     public List<MyDecision> myDecisions = new List<MyDecision>();
 
+    public Animator myAnim;
+
     public int previousScore = 0;
-    
+
     public int maxFitness = 0;
     public int maxFitnessIndex = 0;
 
@@ -54,7 +56,7 @@ public class MyPlayer : MonoBehaviour
 
     void Take_Decision()
     {
-        byte randomDec = (byte) Random.Range(0, 2);
+        byte randomDec = (byte)Random.Range(0, 2);
         if (randomDec == 1) Jump();
 
         int fitness = myMan.Get_Fitness(myBird.transform.position);
@@ -75,6 +77,11 @@ public class MyPlayer : MonoBehaviour
         maxFitness = pointsOwned * 10000;
         previousScore = maxFitness;
         myMan.Next_Pipe();
+    }
+
+    public void Die()
+    {
+        myMan.Player_Die(this);
     }
 
     public void Jump()
