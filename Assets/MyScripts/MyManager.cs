@@ -7,6 +7,7 @@ using TMPro;
 public class MyManager : MonoBehaviour
 {
     public int agentNumber;
+    public int decisionsRemoverCounts = 2;
 
     public float jumpForce = 500;
     public float decisionPeriod = 0.25f;
@@ -31,8 +32,13 @@ public class MyManager : MonoBehaviour
     List<Transform> pipesPos = new List<Transform>();
     List<MyPlayer> players = new List<MyPlayer>();
 
+    public static List<MyDecision> bestDecisionsList = new List<MyDecision>();
+    public static bool success = false;
+
     int nextPipe = 0;
+
     static byte generation = 1;
+    bool canMoveToNextPipe = true;
 
     private void Awake()
     {
@@ -41,6 +47,8 @@ public class MyManager : MonoBehaviour
             canStart = true;
         }
         canPlay = canStart;
+        canMoveToNextPipe = true;
+        Time.timeScale = 1;
         generationTxt1.text = "Generation: " + generation.ToString();
     }
 
@@ -66,8 +74,8 @@ public class MyManager : MonoBehaviour
             MyPlayer playerScript = Instantiate(player, nextSpawnPos, Quaternion.identity, playerSpawnPos).
                 GetComponent<MyPlayer>();
             playerScript.Set_My_Manager(this);
-            if (nextSpawnPos.y < 2)
-                nextSpawnPos.y += 0.4f;
+            //if (nextSpawnPos.y < 2)
+            //    nextSpawnPos.y += 0.4f;
             players.Add(playerScript);
         }
         nextSpawnPos = playerSpawnPos.position;
@@ -76,8 +84,8 @@ public class MyManager : MonoBehaviour
             MyPlayer playerScript = Instantiate(player, nextSpawnPos, Quaternion.identity, playerSpawnPos).
                 GetComponent<MyPlayer>();
             playerScript.Set_My_Manager(this);
-            if (nextSpawnPos.y > -2)
-                nextSpawnPos.y -= 0.4f;
+            //if (nextSpawnPos.y > -2)
+            //    nextSpawnPos.y -= 0.4f;
             players.Add(playerScript);
         }
     }
@@ -94,8 +102,22 @@ public class MyManager : MonoBehaviour
         }
 
         tempPlayDash.Set_Me(deadPlayer.mySpriteRend.color, deadPlayer.maxFitness.ToString(), deadPlayerDecisions);
+
+        if (players.Count == 1)
+        {
+            bestDecisionsList = deadPlayer.myDecisions;
+
+            int counter = 0;
+
+            while (bestDecisionsList.Count > 0 && counter < decisionsRemoverCounts)
+            {
+                bestDecisionsList.RemoveAt(bestDecisionsList.Count - 1);
+                counter++;
+            }
+        }
         players.Remove(deadPlayer);
         Destroy(deadPlayer.gameObject);
+
         if (players.Count == 0)
         {
             canStart = false;
@@ -109,6 +131,7 @@ public class MyManager : MonoBehaviour
             else
             {
                 myAnim.Play("Death_Anim");
+                canPlay = false;
             }
         }
 
@@ -122,6 +145,7 @@ public class MyManager : MonoBehaviour
         for (int i = 0; i < players.Count; i++)
         {
             Debug.Log("Agent " + i.ToString() + " max fitness: " + players[i].maxFitness);
+            Debug.Log("Next Pipe :" + nextPipe);
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
@@ -143,7 +167,31 @@ public class MyManager : MonoBehaviour
 
     public void Next_Pipe()
     {
-        nextPipe++;
+        if (canMoveToNextPipe)
+        {
+            canMoveToNextPipe = false;
+            nextPipe++;
+            StartCoroutine(Start_Can_Move_Timer());
+            if (nextPipe >= pipesPos.Count)
+            {
+                bestDecisionsList = players[0].myDecisions;
+                Show_Success_Panel();
+            }
+        }
+    }
+
+    void Show_Success_Panel()
+    {
+        autoPlay = false;
+        success = true;
+        Time.timeScale = 0;
+        myAnim.Play("Success");
+    }
+
+    IEnumerator Start_Can_Move_Timer()
+    {
+        yield return new WaitForSeconds(0.3f);
+        canMoveToNextPipe = true;
     }
 
     public int Get_Fitness(Vector2 playerPos)

@@ -24,11 +24,16 @@ public class MyPlayer : MonoBehaviour
     float nextDecisionTime = 0;
 
     int pointsOwned = 0;
+    int indexCount = 0;
 
     void Start()
     {
         nextDecisionTime += myMan.decisionPeriod;
         mySpriteRend.color = Random.ColorHSV();
+        if (MyManager.success)
+        {
+            myRig.GetComponent<Collider2D>().enabled = false;
+        }
     }
 
     // Update is called once per frame
@@ -56,7 +61,17 @@ public class MyPlayer : MonoBehaviour
 
     void Take_Decision()
     {
-        byte randomDec = (byte)Random.Range(0, 2);
+        byte randomDec = 0;
+        if (indexCount < MyManager.bestDecisionsList.Count)
+        {
+            randomDec = (byte)MyManager.bestDecisionsList[indexCount].decisionTaken;
+            indexCount++;
+        }
+        else
+        {
+            randomDec = (byte)Random.Range(0, 2);
+        }
+
         if (randomDec == 1) Jump();
 
         int fitness = myMan.Get_Fitness(myBird.transform.position);

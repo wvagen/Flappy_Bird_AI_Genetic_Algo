@@ -13,6 +13,7 @@ public class MyPlayerCollisionDetection : MonoBehaviour
         if (collision.tag == "point")
         {
             //Point + beahvior
+            collision.GetComponent<BoxCollider2D>().enabled = false;
             myPlayer.Increment_Score();
         }
     }
